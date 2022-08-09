@@ -18,7 +18,7 @@ public class Question_2 {
             String lowercase = input.toLowerCase(); // lower case string for instruction
             String[] tokens = lowercase.split("\\."); // break string into token
             String operation = tokens[0];
-            System.out.println("Address: " + input.hashCode());
+            System.out.println("Address: " + System.identityHashCode(input));
             PrintBinary(tokens[0], tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
             switch (operation) { // switch case base on instruction operation
                 case "add" -> AddOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
