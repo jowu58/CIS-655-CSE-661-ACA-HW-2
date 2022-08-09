@@ -1,6 +1,3 @@
-package syr;
-
-
 class Register{
     static int s0 = 0;
     static int r1 = 0;
