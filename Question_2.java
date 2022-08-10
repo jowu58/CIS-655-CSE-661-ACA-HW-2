@@ -1,4 +1,3 @@
-import java.util.Scanner;
 class Register{
     static int s0 = 0;
     static int r1 = 0;
@@ -7,37 +6,62 @@ class Register{
     static int r4 = 0;
     static int r5 = 0;
 }
+class BinaryOpcode{
+    static String op_binary;
+    static String fr_binary;
+    static String sr_binary;
+    static String dr_binary;
+    static String im_binary;
+}
 
 public class Question_2 {
     public static void main(String[] args) {
-        System.out.println("Please enter code:");
+/*        System.out.println("Please enter code:");*/
+        String op_binary, fr_binary, sr_binary, dr_binary, im_binary;
         boolean exitFlag = false;
         while (!exitFlag) {
-            Scanner sc = new Scanner(System.in);
-            String input = sc.nextLine();
-            String lowercase = input.toLowerCase(); // lower case string for instruction
+//          ************************ Link keyboard input to variable (user_input) to processes instruction ************************
+/*            Scanner sc = new Scanner(System.in);
+            String input = sc.nextLine();*/
+            String user_input = "add.s0.s0.r1.9";
+            String lowercase = user_input.toLowerCase(); // lower case string for instruction
             String[] tokens = lowercase.split("\\.");  // break string into token
             String operation = tokens[0];
-            System.out.println("Address: " + input.hashCode());
+
+//          ************************ memory address variable: (System.identityHashCode(user_input)) ************************
+            System.out.println("Address: " + System.identityHashCode(user_input));
+
+//          ************************ binary code for instruction is all save in BinaryOpcode Class ************************
             PrintBinary(tokens[0], tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+
             switch (operation) { // switch case base on instruction operation
-                case "add" : AddOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
-                case "sub" : SubOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
-                case "mul" : MulOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
-                case "div" : DivOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                case "add" :
+                    AddOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                    break;
+                case "sub" :
+                    SubOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                    break;
+                case "mul" :
+                    MulOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                    break;
+                case "div" :
+                    DivOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                    break;
             }
-            System.out.println("s0: " + Register.s0);
+//          ************************ register value is link with Register Class (Register.xx) to show register value ************************
+
+/*            System.out.println("s0: " + Register.s0);
             System.out.println("r1: " + Register.r1);
             System.out.println("r2: " + Register.r2);
             System.out.println("r3: " + Register.r3);
             System.out.println("r4: " + Register.r4);
-            System.out.println("r5: " + Register.r5);
+            System.out.println("r5: " + Register.r5);*/
             if (input.equals(""))
                 exitFlag = true;
 
         }
     }
-
+//  ************************ Syntax check, change to pop up warning ************************
     private static void CheckSyntax(String syntax) {
         String[] tokens = syntax.split("\\.");
         if (tokens.length > 5) {
@@ -65,85 +89,84 @@ public class Question_2 {
         }
     }
     private static void PrintBinary(String op, String firstReg, String secondReg, String destinationReg, int immediateVal){
-        System.out.print("opcode: ");
+        // operation binary code
         switch (op){
             case "add":
-                System.out.println("00");
+                BinaryOpcode.op_binary= "00";
                 break;
             case "sub":
-                System.out.println("01");
+                BinaryOpcode.op_binary = "01";
                 break;
             case "mul":
-                System.out.println("10");
+                BinaryOpcode.op_binary = "10";
                 break;
             case "div":
-                System.out.println("11");
+                BinaryOpcode.op_binary = "11";
                 break;
         }
-        System.out.print("first reg: ");
+        // first register binary code
         switch (firstReg){
             case "s0":
-                System.out.println("000");
+                BinaryOpcode.fr_binary = "000";
                 break;
             case "r1":
-                System.out.println("001");
+                BinaryOpcode.fr_binary = "001";
                 break;
             case "r2":
-                System.out.println("010");
+                BinaryOpcode.fr_binary = "010";
                 break;
             case "r3":
-                System.out.println("011");
+                BinaryOpcode.fr_binary = "011";
                 break;
             case "r4":
-                System.out.println("100");
+                BinaryOpcode.fr_binary = "100";
                 break;
             case "r5":
-                System.out.println("101");
+                BinaryOpcode.fr_binary = "101";
                 break;
         }
-        System.out.print("second reg: ");
+        // second register binary code
         switch (secondReg){
             case "s0":
-                System.out.println("000");
+                BinaryOpcode.sr_binary = "000";
                 break;
             case "r1":
-                System.out.println("001");
+                BinaryOpcode.sr_binary = "001";
                 break;
             case "r2":
-                System.out.println("010");
+                BinaryOpcode.sr_binary = "010";
                 break;
             case "r3":
-                System.out.println("011");
+                BinaryOpcode.sr_binary = "011";
                 break;
             case "r4":
-                System.out.println("100");
+                BinaryOpcode.sr_binary = "100";
                 break;
             case "r5":
-                System.out.println("101");
+                BinaryOpcode.sr_binary = "101";
                 break;
         }
-        System.out.print("destination reg: ");
+        // destination register binary code
         switch (destinationReg){
             case "r1":
-                System.out.println("001");
+                BinaryOpcode.dr_binary = "001";
                 break;
             case "r2":
-                System.out.println("010");
+                BinaryOpcode.dr_binary = "010";
                 break;
             case "r3":
-                System.out.println("011");
+                BinaryOpcode.dr_binary = "011";
                 break;
             case "r4":
-                System.out.println("100");
+                BinaryOpcode.dr_binary = "100";
                 break;
             case "r5":
-                System.out.println("101");
+                BinaryOpcode.dr_binary = "101";
                 break;
         }
-        System.out.print("immediate value: ");
+        // immediate value binary code
         String val_res = Integer.toBinaryString(immediateVal);
-        String resultWithPadding = String.format("%12s", val_res).replaceAll(" ", "0");
-        System.out.println(resultWithPadding);
+        BinaryOpcode.im_binary = String.format("%12s", val_res).replaceAll(" ", "0");
     }
     private static void AddOperation(String firstReg, String secondReg, String destinationReg, int immediateVal){
         if (firstReg.equals("s0") && secondReg.equals("s0") && immediateVal != 0){ // add.s0.s0.r3.10 : r3 = 10
@@ -489,7 +512,7 @@ public class Question_2 {
                             switch (secondReg){
                                 case "r1":
                                     Register.r4 = Register.r5 + Register.r1;
-                                break;
+                                    break;
                                 case "r2":
                                     Register.r4 = Register.r5 + Register.r2;
                                     break;
@@ -1443,7 +1466,7 @@ public class Question_2 {
         }
     }
     private static void DivOperation(String firstReg, String secondReg, String destinationReg, int immediateVal) {
-        if (secondReg.equals("s0")){
+        if (secondReg.equals("s0")){ // second reg can't be s0, since nothing can divide by 0
             System.out.println("Can't divided by 0!");
             System.exit(-1);
         }
@@ -1754,13 +1777,13 @@ public class Question_2 {
                         case "r4":
                             switch (secondReg) {
                                 case "r1": Register.r4 = Register.r4 / Register.r1;
-                                break;
+                                    break;
                                 case "r2": Register.r4 = Register.r4 / Register.r2;
-                                break;
+                                    break;
                                 case "r3": Register.r4 = Register.r4 / Register.r3;
-                                break;
+                                    break;
                                 case "r5": Register.r4 = Register.r4 / Register.r5;
-                                break;
+                                    break;
                             }
                             break;
                         case "r5":
