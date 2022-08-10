@@ -1693,9 +1693,15 @@ public class Question_2 {
                     switch (firstReg) {
                         case "r1":
                             switch (secondReg){
-                                case "r2" -> Register.r1 = Register.r1 / Register.r2;
-                                case "r3" -> Register.r1 = Register.r1 / Register.r3;
-                                case "r4" -> Register.r1 = Register.r1 / Register.r4;
+                                case "r2":
+                                    Register.r1 = Register.r1 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r1 = Register.r1 / Register.r3;
+                                    break;
+                                case "r4":
+                                    Register.r1 = Register.r1 / Register.r4;
+                                    break;
                                 case "r5" -> Register.r1 = Register.r1 / Register.r5;
                             }
                             break;
@@ -1799,24 +1805,44 @@ public class Question_2 {
                             switch (secondReg){
                                 case "r1" -> Register.r3 = Register.r3 / Register.r1;
                                 case "r2" -> Register.r3 = Register.r3 / Register.r2;
-                                case "r4" -> Register.r3 = Register.r3 / Register.r4;
-                                case "r5" -> Register.r3 = Register.r3 / Register.r5;
+                                case "r4":
+                                    Register.r3 = Register.r3 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r3 = Register.r3 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r4":
                             switch (secondReg){
-                                case "r1" -> Register.r3 = Register.r4 / Register.r1;
-                                case "r2" -> Register.r3 = Register.r4 / Register.r2;
-                                case "r3" -> Register.r3 = Register.r4 / Register.r3;
-                                case "r5" -> Register.r3 = Register.r4 / Register.r5;
+                                case "r1":
+                                    Register.r3 = Register.r4 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r3 = Register.r4 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r3 = Register.r4 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r3 = Register.r4 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r5":
                             switch (secondReg){
-                                case "r1" -> Register.r3 = Register.r5 / Register.r1;
-                                case "r2" -> Register.r3 = Register.r5 / Register.r2;
-                                case "r3" -> Register.r3 = Register.r5 / Register.r3;
-                                case "r5" -> Register.r3 = Register.r5 / Register.r4;
+                                case "r1":
+                                    Register.r3 = Register.r5 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r3 = Register.r5 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r3 = Register.r5 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r3 = Register.r5 / Register.r4;
+                                    break;
                             }
                             break;
                     }
@@ -1825,42 +1851,82 @@ public class Question_2 {
                     switch (firstReg) {
                         case "r1":
                             switch (secondReg){
-                                case "r2" -> Register.r4 = Register.r1 / Register.r2;
-                                case "r3" -> Register.r4 = Register.r1 / Register.r3;
-                                case "r4" -> Register.r4 = Register.r1 / Register.r4;
-                                case "r5" -> Register.r4 = Register.r1 / Register.r5;
+                                case "r2":
+                                    Register.r4 = Register.r1 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r4 = Register.r1 / Register.r3;
+                                    break;
+                                case "r4":
+                                    Register.r4 = Register.r1 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r4 = Register.r1 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r2":
                             switch (secondReg){
-                                case "r1" -> Register.r4 = Register.r2 / Register.r1;
-                                case "r3" -> Register.r4 = Register.r2 / Register.r3;
-                                case "r4" -> Register.r4 = Register.r2 / Register.r4;
-                                case "r5" -> Register.r4 = Register.r2 / Register.r5;
+                                case "r1":
+                                    Register.r4 = Register.r2 / Register.r1;
+                                    break;
+                                case "r3":
+                                    Register.r4 = Register.r2 / Register.r3;
+                                    break;
+                                case "r4":
+                                    Register.r4 = Register.r2 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r4 = Register.r2 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r3":
                             switch (secondReg){
-                                case "r1" -> Register.r4 = Register.r3 / Register.r1;
-                                case "r2" -> Register.r4 = Register.r3 / Register.r2;
-                                case "r4" -> Register.r4 = Register.r3 / Register.r4;
-                                case "r5" -> Register.r4 = Register.r3 / Register.r5;
+                                case "r1":
+                                    Register.r4 = Register.r3 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r4 = Register.r3 / Register.r2;
+                                    break;
+                                case "r4":
+                                    Register.r4 = Register.r3 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r4 = Register.r3 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r4":
                             switch (secondReg){
-                                case "r1" -> Register.r4 = Register.r4 / Register.r1;
-                                case "r2" -> Register.r4 = Register.r4 / Register.r2;
-                                case "r3" -> Register.r4 = Register.r4 / Register.r3;
-                                case "r5" -> Register.r4 = Register.r4 / Register.r5;
+                                case "r1":
+                                    Register.r4 = Register.r4 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r4 = Register.r4 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r4 = Register.r4 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r4 = Register.r4 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r5":
                             switch (secondReg){
-                                case "r1" -> Register.r4 = Register.r5 / Register.r1;
-                                case "r2" -> Register.r4 = Register.r5 / Register.r2;
-                                case "r3" -> Register.r4 = Register.r5 / Register.r3;
-                                case "r5" -> Register.r4 = Register.r5 / Register.r4;
+                                case "r1":
+                                    Register.r4 = Register.r5 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r4 = Register.r5 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r4 = Register.r5 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r4 = Register.r5 / Register.r4;
+                                    break;
                             }
                             break;
                     }
@@ -1869,42 +1935,82 @@ public class Question_2 {
                     switch (firstReg) {
                         case "r1":
                             switch (secondReg){
-                                case "r2" -> Register.r5 = Register.r1 / Register.r2;
-                                case "r3" -> Register.r5 = Register.r1 / Register.r3;
-                                case "r4" -> Register.r5 = Register.r1 / Register.r4;
-                                case "r5" -> Register.r5 = Register.r1 / Register.r5;
+                                case "r2":
+                                    Register.r5 = Register.r1 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r5 = Register.r1 / Register.r3;
+                                    break;
+                                case "r4":
+                                    Register.r5 = Register.r1 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r5 = Register.r1 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r2":
                             switch (secondReg){
-                                case "r1" -> Register.r5 = Register.r2 / Register.r1;
-                                case "r3" -> Register.r5 = Register.r2 / Register.r3;
-                                case "r4" -> Register.r5 = Register.r2 / Register.r4;
-                                case "r5" -> Register.r5 = Register.r2 / Register.r5;
+                                case "r1":
+                                    Register.r5 = Register.r2 / Register.r1;
+                                    break;
+                                case "r3":
+                                    Register.r5 = Register.r2 / Register.r3;
+                                    break;
+                                case "r4":
+                                    Register.r5 = Register.r2 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r5 = Register.r2 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r3":
                             switch (secondReg){
-                                case "r1" -> Register.r5 = Register.r3 / Register.r1;
-                                case "r2" -> Register.r5 = Register.r3 / Register.r2;
-                                case "r4" -> Register.r5 = Register.r3 / Register.r4;
-                                case "r5" -> Register.r5 = Register.r3 / Register.r5;
+                                case "r1":
+                                    Register.r5 = Register.r3 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r5 = Register.r3 / Register.r2;
+                                    break;
+                                case "r4":
+                                    Register.r5 = Register.r3 / Register.r4;
+                                    break;
+                                case "r5":
+                                    Register.r5 = Register.r3 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r4":
                             switch (secondReg){
-                                case "r1" -> Register.r5 = Register.r4 / Register.r1;
-                                case "r2" -> Register.r5 = Register.r4 / Register.r2;
-                                case "r3" -> Register.r5 = Register.r4 / Register.r3;
-                                case "r5" -> Register.r5 = Register.r4 / Register.r5;
+                                case "r1":
+                                    Register.r5 = Register.r4 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r5 = Register.r4 / Register.r2;
+                                    break;
+                                case "r3":
+                                    Register.r5 = Register.r4 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r5 = Register.r4 / Register.r5;
+                                    break;
                             }
                             break;
                         case "r5":
                             switch (secondReg){
-                                case "r1" -> Register.r5 = Register.r5 / Register.r1;
-                                case "r2" -> Register.r5 = Register.r5 / Register.r2;
-                                case "r3" -> Register.r5 = Register.r5 / Register.r3;
-                                case "r5" -> Register.r5 = Register.r5 / Register.r4;
+                                case "r1":
+                                    Register.r5 = Register.r5 / Register.r1;
+                                    break;
+                                case "r2":
+                                    Register.r5 = Register.r5 / Register.r2;
+                                    break;
+                                case "r3": 
+                                    Register.r5 = Register.r5 / Register.r3;
+                                    break;
+                                case "r5":
+                                    Register.r5 = Register.r5 / Register.r4;
+                                    break;
                             }
                             break;
                     }
@@ -1915,42 +2021,82 @@ public class Question_2 {
             switch (destinationReg) {
                 case "r1":
                     switch (firstReg) {
-                        case "r2" -> System.out.println("Cannot divide by 0");
-                        case "r3" -> System.out.println("Cannot divide by 0");
-                        case "r4" -> System.out.println("Cannot divide by 0");
-                        case "r5" -> System.out.println("Cannot divide by 0");
+                        case "r2":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r3":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r4":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r5":
+                            System.out.println("Cannot divide by 0");
+                            break;
                     }
                     break;
                 case "r2":
                     switch (firstReg) {
-                        case "r1" -> System.out.println("Cannot divide by 0");
-                        case "r3" -> System.out.println("Cannot divide by 0");
-                        case "r4" -> System.out.println("Cannot divide by 0");
-                        case "r5" -> System.out.println("Cannot divide by 0");
+                        case "r1":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r3":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r4":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r5":
+                            System.out.println("Cannot divide by 0");
+                            break;
                     }
                     break;
                 case "r3":
                     switch (firstReg) {
-                        case "r1" -> System.out.println("Cannot divide by 0");
-                        case "r2" -> System.out.println("Cannot divide by 0");
-                        case "r4" -> System.out.println("Cannot divide by 0");
-                        case "r5" -> System.out.println("Cannot divide by 0");
+                        case "r1":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r2":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r4":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r5":
+                            System.out.println("Cannot divide by 0");
+                            break;
                     }
                     break;
                 case "r4":
                     switch (firstReg) {
-                        case "r1" -> System.out.println("Cannot divide by 0");
-                        case "r2" -> System.out.println("Cannot divide by 0");
-                        case "r3" -> System.out.println("Cannot divide by 0");
-                        case "r5" -> System.out.println("Cannot divide by 0");
+                        case "r1":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r2":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r3":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r5":
+                            System.out.println("Cannot divide by 0");
+                            break;
                     }
                     break;
                 case "r5":
                     switch (firstReg) {
-                        case "r1" -> System.out.println("Cannot divide by 0");
-                        case "r2" -> System.out.println("Cannot divide by 0");
-                        case "r3" -> System.out.println("Cannot divide by 0");
-                        case "r5" -> System.out.println("Cannot divide by 0");
+                        case "r1":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r2":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r3":
+                            System.out.println("Cannot divide by 0");
+                            break;
+                        case "r5":
+                            System.out.println("Cannot divide by 0");
+                            break;
                     }
                     break;
             }
@@ -1959,42 +2105,82 @@ public class Question_2 {
             switch (destinationReg) {
                 case "r1":
                     switch (secondReg) {
-                        case "r2" -> Register.r1 /= Register.r2;
-                        case "r3" -> Register.r1 /= Register.r3;
-                        case "r4" -> Register.r1 /= Register.r4;
-                        case "r5" -> Register.r1 /= Register.r5;
+                        case "r2":
+                            Register.r1 /= Register.r2;
+                            break;
+                        case "r3":
+                            Register.r1 /= Register.r3;
+                            break;
+                        case "r4":
+                            Register.r1 /= Register.r4;
+                            break;
+                        case "r5":
+                            Register.r1 /= Register.r5;
+                            break;
                     }
                     break;
                 case "r2":
                     switch (secondReg) {
-                        case "r1" -> Register.r2 /= Register.r1;
-                        case "r3" -> Register.r2 /= Register.r3;
-                        case "r4" -> Register.r2 /= Register.r4;
-                        case "r5" -> Register.r2 /= Register.r5;
+                        case "r1":
+                            Register.r2 /= Register.r1;
+                            break;
+                        case "r3":
+                            Register.r2 /= Register.r3;
+                            break;
+                        case "r4":
+                            Register.r2 /= Register.r4;
+                            break;
+                        case "r5": 
+                            Register.r2 /= Register.r5;
+                            break;
                     }
                     break;
                 case "r3":
                     switch (secondReg) {
-                        case "r1" -> Register.r3 /= Register.r1;
-                        case "r2" -> Register.r3 /= Register.r2;
-                        case "r4" -> Register.r3 /= Register.r4;
-                        case "r5" -> Register.r3 /= Register.r5;
+                        case "r1":
+                            Register.r3 /= Register.r1;
+                            break;
+                        case "r2": 
+                            Register.r3 /= Register.r2;
+                            break;
+                        case "r4": 
+                            Register.r3 /= Register.r4;
+                            break;
+                        case "r5":
+                            Register.r3 /= Register.r5;
+                            break;
                     }
                     break;
                 case "r4":
                     switch (secondReg) {
-                        case "r1" -> Register.r4 /= Register.r1;
-                        case "r2" -> Register.r4 /= Register.r2;
-                        case "r3" -> Register.r4 /= Register.r3;
-                        case "r5" -> Register.r4 /= Register.r5;
+                        case "r1":
+                            Register.r4 /= Register.r1;
+                            break;
+                        case "r2": 
+                            Register.r4 /= Register.r2;
+                            break;
+                        case "r3": 
+                            Register.r4 /= Register.r3;
+                            break;
+                        case "r5": 
+                            Register.r4 /= Register.r5;
+                            break;
                     }
                     break;
                 case "r5":
                     switch (secondReg) {
-                        case "r1" -> Register.r5 /= Register.r1;
-                        case "r2" -> Register.r5 /= Register.r2;
-                        case "r3" -> Register.r5 /= Register.r3;
-                        case "r5" -> Register.r5 /= Register.r4;
+                        case "r1": 
+                            Register.r5 /= Register.r1;
+                            break;
+                        case "r2": 
+                            Register.r5 /= Register.r2;
+                            break;
+                        case "r3": 
+                            Register.r5 /= Register.r3;
+                            break;
+                        case "r5": 
+                            Register.r5 /= Register.r4;
+                            break;
                     }
                     break;
             }
