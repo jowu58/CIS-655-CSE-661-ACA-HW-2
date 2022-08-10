@@ -20,13 +20,14 @@ public class Question_2 {
         String op_binary, fr_binary, sr_binary, dr_binary, im_binary;
         boolean exitFlag = false;
         while (!exitFlag) {
-//          ************************ Link keyboard input to variable (user_input) to processes instruction ************************
+//          ************************ feed keyboard input to variable (user_input) to start processes instruction ************************
+            
 /*            Scanner sc = new Scanner(System.in);
             String input = sc.nextLine();*/
+            
             String user_input = "add.s0.s0.r1.9";
             String lowercase = user_input.toLowerCase(); // lower case string for instruction
             String[] tokens = lowercase.split("\\.");  // break string into token
-            String operation = tokens[0];
 
 //          ************************ memory address variable: (System.identityHashCode(user_input)) ************************
             System.out.println("Address: " + System.identityHashCode(user_input));
@@ -34,7 +35,7 @@ public class Question_2 {
 //          ************************ binary code for instruction is all save in BinaryOpcode Class ************************
             PrintBinary(tokens[0], tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
 
-            switch (operation) { // switch case base on instruction operation
+            switch (tokens[0]) { // switch case base on instruction operation
                 case "add" :
                     AddOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
                     break;
@@ -1466,6 +1467,8 @@ public class Question_2 {
         }
     }
     private static void DivOperation(String firstReg, String secondReg, String destinationReg, int immediateVal) {
+        
+//          ************************ divide by 0  pop up warning ************************
         if (secondReg.equals("s0")){ // second reg can't be s0, since nothing can divide by 0
             System.out.println("Can't divided by 0!");
             System.exit(-1);
