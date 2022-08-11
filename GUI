@@ -1,0 +1,1984 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class GUI implements ActionListener {
+    private JFrame frame;
+    private JPanel rootpanel, panel;
+    private JButton button;
+    private JLabel label, message;
+    private JTextField instructionText;
+    private JTextArea textArea, reg, regValue;
+    private static String instruction;
+    private static int s0 = 0;
+    private static int r1 = 0;
+    private static int r2 = 0;
+    private static int r3 = 0;
+    private static int r4 = 0;
+    private static int r5 = 0;
+    private static String op_binary;
+    private static String fr_binary;
+    private static String sr_binary;
+    private static String dr_binary;
+    private static String im_binary;
+
+    public GUI() {
+        frame = new JFrame("Simulator"); //窗口名字
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //退出窗口
+        frame.setBounds(100, 100, 800, 500);
+        frame.setLayout(null);
+
+
+        rootpanel = new JPanel(); //新建panel
+        rootpanel.setLayout(new FlowLayout());
+        panel = new JPanel(); //新建panel
+        panel.setLayout(new FlowLayout());
+        rootpanel.setLayout(null);
+
+        button = new JButton("Enter");//新建按键
+        button.setBounds(400, 70, 80, 25);
+        button.addActionListener(this);
+        frame.add(button); //按键放到panel里
+
+
+        label = new JLabel("Instruction:"); //新建文字标签
+        label.setBounds(250, 20, 80, 25); //标签大小位置
+        frame.add(label); //标签放到panel里
+
+        instructionText = new JTextField(10); //新建文字输入框
+        instructionText.setBounds(350, 20, 165, 25); //文字输入框位置
+        frame.add(instructionText); //文字输入框放到panel里
+
+        message = new JLabel(""); //新建文字标签
+        message.setBounds(400, 95, 300, 25); //标签大小位置
+        frame.add(message); //标签放到panel里
+
+        textArea = new JTextArea();
+        textArea.setBounds(220, 150, 550, 230);
+        textArea.append("Instruction" + "\t          " + "Binary Code" + "\t\t" + "Memory Address" + "\n");
+        frame.add(textArea);
+
+        reg = new JTextArea();
+        reg.append("      Register" + "\n");
+        reg.append("          s0:" + "\n");
+        reg.append("\n");
+        reg.append("          r1:" + "\n");
+        reg.append("\n");
+        reg.append("          r2:" + "\n");
+        reg.append("\n");
+        reg.append("          r3:" + "\n");
+        reg.append("\n");
+        reg.append("          r4:" + "\n");
+        reg.append("\n");
+        reg.append("          r5:" + "\n");
+        reg.setBounds(20, 150, 80, 230);
+        frame.add(reg);
+
+        regValue = new JTextArea();
+        regValue.append("      Value" + "\n");
+        regValue.append("         " + s0 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r1 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r2 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r3 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r4 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r5 + "\n");
+        regValue.setBounds(100, 150, 80, 230);
+        frame.add(regValue);
+
+        frame.setVisible(true); //窗口可见
+    }
+
+    public static void main(String[] args) {
+        new GUI();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        instruction = instructionText.getText();
+        int res = CheckSyntax(instruction);
+        while (res == 0) {
+            message.setText("Syntax error");
+            while (res == 0){
+                instructionText.setText("");
+                instruction = instructionText.getText();
+                res = CheckSyntax(instruction);
+            }
+        }
+
+        String lc_instruction = instruction.toLowerCase(); // lower case string for instruction
+
+        String[] tokens = lc_instruction.split("\\.");  // break string into token
+
+        String operation = tokens[0];
+        switch (operation) { // switch case base on instruction operation
+            case "add" :
+                AddOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                break;
+            case "sub" :
+                SubOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                break;
+            case "mul" :
+                MulOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                break;
+            case "div" :
+                DivOperation(tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+                break;
+        }
+
+        regValue.selectAll();
+        regValue.replaceSelection("");
+        regValue.append("      Value" + "\n");
+        regValue.append("         " + s0 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r1 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r2 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r3 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r4 + "\n");
+        regValue.append("\n");
+        regValue.append("         " + r5 + "\n");
+
+
+        long add = System.identityHashCode(instruction);
+        GetBinary(tokens[0], tokens[1], tokens[2], tokens[3], Integer.parseInt(tokens[4]));
+
+        textArea.append(instruction + "\t          " + op_binary + " " + fr_binary + " " +
+                sr_binary  + " " + dr_binary  + " " + im_binary + "\t" + add + "\n");
+
+        instructionText.setText("");
+        message.setText("");
+    }
+    private static int CheckSyntax(String syntax) {
+        String[] tokens = syntax.split("\\.");
+
+        try {
+            Integer.parseInt(tokens[4]);
+        } catch(NumberFormatException e) {
+            return 0;
+        }
+
+        if (tokens.length != 5)
+                return 0;
+
+        else if (tokens[0].equals("add") || tokens[0].equals("sub") || tokens[0].equals("mul") || tokens[0].equals("div")){
+            if (tokens[1].equals("s0") || tokens[1].equals("r1") || tokens[1].equals("r2") || tokens[1].equals("r3") ||
+                    tokens[1].equals("r4") || tokens[1].equals("r5"))
+                if (tokens[2].equals("s0") || tokens[2].equals("r1") ||
+                    tokens[2].equals("r2") || tokens[2].equals("r3") || tokens[2].equals("r4") || tokens[2].equals("r5"))
+                    if (tokens[3].equals("r1") || tokens[3].equals("r2") || tokens[3].equals("r3") || tokens[3].equals("r4") ||
+                    tokens[3].equals("r5"))
+                        return 1;
+        }
+        return 0;
+    }
+    private static void GetBinary(String op, String firstReg, String secondReg, String destinationReg, int immediateVal){
+        // operation binary code
+        switch (op){
+            case "add":
+                op_binary= "00 ";
+                break;
+            case "sub":
+                op_binary = "01 ";
+                break;
+            case "mul":
+                op_binary = "10 ";
+                break;
+            case "div":
+                op_binary = "11 ";
+                break;
+        }
+        // first register binary code
+        switch (firstReg){
+            case "s0":
+                fr_binary = "000";
+                break;
+            case "r1":
+                fr_binary = "001";
+                break;
+            case "r2":
+                fr_binary = "010";
+                break;
+            case "r3":
+                fr_binary = "011";
+                break;
+            case "r4":
+                fr_binary = "100";
+                break;
+            case "r5":
+                fr_binary = "101";
+                break;
+        }
+        // second register binary code
+        switch (secondReg){
+            case "s0":
+                sr_binary = "000";
+                break;
+            case "r1":
+                sr_binary = "001";
+                break;
+            case "r2":
+                 sr_binary = "010";
+                break;
+            case "r3":
+                 sr_binary = "011";
+                break;
+            case "r4":
+                 sr_binary = "100";
+                break;
+            case "r5":
+                 sr_binary = "101";
+                break;
+        }
+        // destination register binary code
+        switch (destinationReg){
+            case "r1":
+                 dr_binary = "001";
+                break;
+            case "r2":
+                 dr_binary = "010";
+                break;
+            case "r3":
+                 dr_binary = "011";
+                break;
+            case "r4":
+                 dr_binary = "100";
+                break;
+            case "r5":
+                 dr_binary = "101";
+                break;
+        }
+        // immediate value binary code
+        String val_res = Integer.toBinaryString(immediateVal);
+         im_binary = String.format("%12s", val_res).replaceAll(" ", "0");
+    }
+    private static void AddOperation(String firstReg, String secondReg, String destinationReg, int immediateVal){
+        if (firstReg.equals("s0") && secondReg.equals("s0") && immediateVal != 0){ // add.s0.s0.r3.10 : r3 = 10
+            switch (destinationReg) {
+                case "r1":
+                    r1 = immediateVal;
+                    break;
+                case "r2":
+                    r2 = immediateVal;
+                    break;
+                case "r3":
+                    r3 = immediateVal;
+                    break;
+                case "r4":
+                    r4 = immediateVal;
+                    break;
+                case "r5":
+                    r5 = immediateVal;
+                    break;
+            }
+        }
+        else if (!firstReg.equals("s0") && !secondReg.equals("s0") && immediateVal == 0){ //add.r1.r2.r3.0 : r3 = r1 + r2
+            switch (destinationReg) {
+                case "r1":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r1 = r1 + r2;
+                                    break;
+                                case "r3":
+                                    r1 = r1 + r3;
+                                    break;
+                                case "r4":
+                                    r1 = r1 + r4;
+                                    break;
+                                case "r5":
+                                    r1 = r1 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r2 + r1;
+                                    break;
+                                case "r3":
+                                    r1 = r2 + r3;
+                                    break;
+                                case "r4":
+                                    r1 = r2 + r4;
+                                    break;
+                                case "r5":
+                                    r1 = r2 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r3 + r1;
+                                    break;
+                                case "r2":
+                                    r1 = r3 + r2;
+                                    break;
+                                case "r4":
+                                    r1 = r3 + r4;
+                                    break;
+                                case "r5":
+                                    r1 = r3 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r4 + r1;
+                                    break;
+                                case "r2":
+                                    r1 = r4 + r2;
+                                    break;
+                                case "r3":
+                                    r1 = r4 + r3;
+                                    break;
+                                case "r5":
+                                    r1 = r4 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r5 + r1;
+                                    break;
+                                case "r2":
+                                    r1 = r5 + r2;
+                                    break;
+                                case "r3":
+                                    r1 = r5 + r3;
+                                    break;
+                                case "r5":
+                                    r1 = r5 + r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r2":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r2 = r1 + r2;
+                                    break;
+                                case "r3":
+                                    r2 = r1 + r3;
+                                    break;
+                                case "r4":
+                                    r2 = r1 + r4;
+                                    break;
+                                case "r5":
+                                    r2 = r1 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r2 + r1;
+                                    break;
+                                case "r3":
+                                    r2 = r2 + r3;
+                                    break;
+                                case "r4":
+                                    r2 = r2 + r4;
+                                    break;
+                                case "r5":
+                                    r2 = r2 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r3 + r1;
+                                    break;
+                                case "r2":
+                                    r2 = r3 + r2;
+                                    break;
+                                case "r4":
+                                    r2 = r3 + r4;
+                                    break;
+                                case "r5":
+                                    r2 = r3 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r4 + r1;
+                                    break;
+                                case "r2":
+                                    r2 = r4 + r2;
+                                    break;
+                                case "r3":
+                                    r2 = r4 + r3;
+                                    break;
+                                case "r5":
+                                    r2 = r4 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r5 + r1;
+                                    break;
+                                case "r2":
+                                    r2 = r5 + r2;
+                                    break;
+                                case "r3":
+                                    r2 = r5 + r3;
+                                    break;
+                                case "r5":
+                                    r2 = r5 + r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r3":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r3 = r1 + r2;
+                                    break;
+                                case "r3":
+                                    r3 = r1 + r3;
+                                    break;
+                                case "r4":
+                                    r3 = r1 + r4;
+                                    break;
+                                case "r5":
+                                    r3 = r1 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r2 + r1;
+                                    break;
+                                case "r3":
+                                    r3 = r2 + r3;
+                                    break;
+                                case "r4":
+                                    r3 = r2 + r4;
+                                    break;
+                                case "r5":
+                                    r3 = r2 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r3 + r1;
+                                    break;
+                                case "r2":
+                                    r3 = r3 + r2;
+                                    break;
+                                case "r4":
+                                    r3 = r3 + r4;
+                                    break;
+                                case "r5":
+                                    r3 = r3 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r4 + r1;
+                                    break;
+                                case "r2":
+                                    r3 = r4 + r2;
+                                    break;
+                                case "r3":
+                                    r3 = r4 + r3;
+                                    break;
+                                case "r5":
+                                    r3 = r4 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r5 + r1;
+                                    break;
+                                case "r2":
+                                    r3 = r5 + r2;
+                                    break;
+                                case "r3":
+                                    r3 = r5 + r3;
+                                    break;
+                                case "r5":
+                                    r3 = r5 + r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r4":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r4 = r1 + r2;
+                                    break;
+                                case "r3":
+                                    r4 = r1 + r3;
+                                    break;
+                                case "r4":
+                                    r4 = r1 + r4;
+                                    break;
+                                case "r5":
+                                    r4 = r1 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r2 + r1;
+                                    break;
+                                case "r3":
+                                    r4 = r2 + r3;
+                                    break;
+                                case "r4":
+                                    r4 = r2 + r4;
+                                    break;
+                                case "r5":
+                                    r4 = r2 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r3 + r1;
+                                    break;
+                                case "r2":
+                                    r4 = r3 + r2;
+                                    break;
+                                case "r4":
+                                    r4 = r3 + r4;
+                                    break;
+                                case "r5":
+                                    r4 = r3 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r4 + r1;
+                                    break;
+                                case "r2":
+                                    r4 = r4 + r2;
+                                    break;
+                                case "r3":
+                                    r4 = r4 + r3;
+                                    break;
+                                case "r5":
+                                    r4 = r4 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r5 + r1;
+                                    break;
+                                case "r2":
+                                    r4 = r5 + r2;
+                                    break;
+                                case "r3":
+                                    r4 = r5 + r3;
+                                    break;
+                                case "r5":
+                                    r4 = r5 + r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r5":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r5 = r1 + r2;
+                                    break;
+                                case "r3":
+                                    r5 = r1 + r3;
+                                    break;
+                                case "r4":
+                                    r5 = r1 + r4;
+                                    break;
+                                case "r5":
+                                    r5 = r1 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r2 + r1;
+                                    break;
+                                case "r3":
+                                    r5 = r2 + r3;
+                                    break;
+                                case "r4":
+                                    r5 = r2 + r4;
+                                    break;
+                                case "r5":
+                                    r5 = r2 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r3 + r1;
+                                    break;
+                                case "r2":
+                                    r5 = r3 + r2;
+                                    break;
+                                case "r4":
+                                    r5 = r3 + r4;
+                                    break;
+                                case "r5":
+                                    r5 = r3 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r4 + r1;
+                                    break;
+                                case "r2":
+                                    r5 = r4 + r2;
+                                    break;
+                                case "r3":
+                                    r5 = r4 + r3;
+                                    break;
+                                case "r5":
+                                    r5 = r4 + r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r5 + r1;
+                                    break;
+                                case "r2":
+                                    r5 = r5 + r2;
+                                    break;
+                                case "r3":
+                                    r5 = r5 + r3;
+                                    break;
+                                case "r5":
+                                    r5 = r5 + r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+    private static void SubOperation(String firstReg, String secondReg, String destinationReg, int immediateVal){
+        if (!firstReg.equals("s0") && !secondReg.equals("s0") && immediateVal == 0){ // sub.r1.r2.r3.0 : r3 = r1 - r2
+            switch (destinationReg) {
+                case "r1":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r1 = r1 - r2;
+                                    break;
+                                case "r3":
+                                    r1 = r1 - r3;
+                                    break;
+                                case "r4":
+                                    r1 = r1 - r4;
+                                    break;
+                                case "r5":
+                                    r1 = r1 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r2 - r1;
+                                    break;
+                                case "r3":
+                                    r1 = r2 - r3;
+                                    break;
+                                case "r4":
+                                    r1 = r2 - r4;
+                                    break;
+                                case "r5":
+                                    r1 = r2 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r3 - r1;
+                                    break;
+                                case "r2":
+                                    r1 = r3 - r2;
+                                    break;
+                                case "r4":
+                                    r1 = r3 - r4;
+                                    break;
+                                case "r5":
+                                    r1 = r3 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r4 - r1;
+                                    break;
+                                case "r2":
+                                    r1 = r4 - r2;
+                                    break;
+                                case "r3":
+                                    r1 = r4 - r3;
+                                    break;
+                                case "r5":
+                                    r1 = r4 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r1 = r5 - r1;
+                                    break;
+                                case "r2":
+                                    r1 = r5 - r2;
+                                    break;
+                                case "r3":
+                                    r1 = r5 - r3;
+                                    break;
+                                case "r5":
+                                    r1 = r5 - r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r2":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r2 = r1 - r2;
+                                    break;
+                                case "r3":
+                                    r2 = r1 - r3;
+                                    break;
+                                case "r4":
+                                    r2 = r1 - r4;
+                                    break;
+                                case "r5":
+                                    r2 = r1 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r2 - r1;
+                                    break;
+                                case "r3":
+                                    r2 = r2 - r3;
+                                    break;
+                                case "r4":
+                                    r2 = r2 - r4;
+                                    break;
+                                case "r5":
+                                    r2 = r2 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r3 - r1;
+                                    break;
+                                case "r2":
+                                    r2 = r3 - r2;
+                                    break;
+                                case "r4":
+                                    r2 = r3 - r4;
+                                    break;
+                                case "r5":
+                                    r2 = r3 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r4 - r1;
+                                    break;
+                                case "r2":
+                                    r2 = r4 - r2;
+                                    break;
+                                case "r3":
+                                    r2 = r4 - r3;
+                                    break;
+                                case "r5":
+                                    r2 = r4 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r2 = r5 - r1;
+                                    break;
+                                case "r2":
+                                    r2 = r5 - r2;
+                                    break;
+                                case "r3":
+                                    r2 = r5 - r3;
+                                    break;
+                                case "r5":
+                                    r2 = r5 - r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r3":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r3 = r1 - r2;
+                                    break;
+                                case "r3":
+                                    r3 = r1 - r3;
+                                    break;
+                                case "r4":
+                                    r3 = r1 - r4;
+                                    break;
+                                case "r5":
+                                    r3 = r1 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r2 - r1;
+                                    break;
+                                case "r3":
+                                    r3 = r2 - r3;
+                                    break;
+                                case "r4":
+                                    r3 = r2 - r4;
+                                    break;
+                                case "r5":
+                                    r3 = r2 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r3 - r1;
+                                    break;
+                                case "r2":
+                                    r3 = r3 - r2;
+                                    break;
+                                case "r4":
+                                    r3 = r3 - r4;
+                                    break;
+                                case "r5":
+                                    r3 = r3 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r4 - r1;
+                                    break;
+                                case "r2":
+                                    r3 = r4 - r2;
+                                    break;
+                                case "r3":
+                                    r3 = r4 - r3;
+                                    break;
+                                case "r5":
+                                    r3 = r4 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r3 = r5 - r1;
+                                    break;
+                                case "r2":
+                                    r3 = r5 - r2;
+                                    break;
+                                case "r3":
+                                    r3 = r5 - r3;
+                                    break;
+                                case "r5":
+                                    r3 = r5 - r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r4":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r4 = r1 - r2;
+                                    break;
+                                case "r3":
+                                    r4 = r1 - r3;
+                                    break;
+                                case "r4":
+                                    r4 = r1 - r4;
+                                    break;
+                                case "r5":
+                                    r4 = r1 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r2 - r1;
+                                    break;
+                                case "r3":
+                                    r4 = r2 - r3;
+                                    break;
+                                case "r4":
+                                    r4 = r2 - r4;
+                                    break;
+                                case "r5":
+                                    r4 = r2 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r3 - r1;
+                                    break;
+                                case "r2":
+                                    r4 = r3 - r2;
+                                    break;
+                                case "r4":
+                                    r4 = r3 - r4;
+                                    break;
+                                case "r5":
+                                    r4 = r3 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r4 - r1;
+                                    break;
+                                case "r2":
+                                    r4 = r4 - r2;
+                                    break;
+                                case "r3":
+                                    r4 = r4 - r3;
+                                    break;
+                                case "r5":
+                                    r4 = r4 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r4 = r5 - r1;
+                                    break;
+                                case "r2":
+                                    r4 = r5 - r2;
+                                    break;
+                                case "r3":
+                                    r4 = r5 - r3;
+                                    break;
+                                case "r5":
+                                    r4 = r5 - r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r5":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg){
+                                case "r2":
+                                    r5 = r1 - r2;
+                                    break;
+                                case "r3":
+                                    r5 = r1 - r3;
+                                    break;
+                                case "r4":
+                                    r5 = r1 - r4;
+                                    break;
+                                case "r5":
+                                    r5 = r1 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r2 - r1;
+                                    break;
+                                case "r3":
+                                    r5 = r2 - r3;
+                                    break;
+                                case "r4":
+                                    r5 = r2 - r4;
+                                    break;
+                                case "r5":
+                                    r5 = r2 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r3 - r1;
+                                    break;
+                                case "r2":
+                                    r5 = r3 - r2;
+                                    break;
+                                case "r4":
+                                    r5 = r3 - r4;
+                                    break;
+                                case "r5":
+                                    r5 = r3 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r4 - r1;
+                                    break;
+                                case "r2":
+                                    r5 = r4 - r2;
+                                    break;
+                                case "r3":
+                                    r5 = r4 - r3;
+                                    break;
+                                case "r5":
+                                    r5 = r4 - r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg){
+                                case "r1":
+                                    r5 = r5 - r1;
+                                    break;
+                                case "r2":
+                                    r5 = r5 - r2;
+                                    break;
+                                case "r3":
+                                    r5 = r5 - r3;
+                                    break;
+                                case "r5":
+                                    r5 = r5 - r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+    private static void MulOperation(String firstReg, String secondReg, String destinationReg, int immediateVal) {
+        if (!firstReg.equals("s0") && !secondReg.equals("s0") && immediateVal == 0) { // mul.r1.r2.r3.0 : r3 = r1 * r2
+            switch (destinationReg) {
+                case "r1":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r1 = r1 * r2;
+                                    break;
+                                case "r3":
+                                    r1 = r1 * r3;
+                                    break;
+                                case "r4":
+                                    r1 = r1 * r4;
+                                    break;
+                                case "r5":
+                                    r1 = r1 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r2 * r1;
+                                    break;
+                                case "r3":
+                                    r1 = r2 * r3;
+                                    break;
+                                case "r4":
+                                    r1 = r2 * r4;
+                                    break;
+                                case "r5":
+                                    r1 = r2 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r3 * r1;
+                                    break;
+                                case "r2":
+                                    r1 = r3 * r2;
+                                    break;
+                                case "r4":
+                                    r1 = r3 * r4;
+                                    break;
+                                case "r5":
+                                    r1 = r3 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r4 * r1;
+                                    break;
+                                case "r2":
+                                    r1 = r4 * r2;
+                                    break;
+                                case "r3":
+                                    r1 = r4 * r3;
+                                    break;
+                                case "r5":
+                                    r1 = r4 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r5 * r1;
+                                    break;
+                                case "r2":
+                                    r1 = r5 * r2;
+                                    break;
+                                case "r3":
+                                    r1 = r5 * r3;
+                                    break;
+                                case "r5":
+                                    r1 = r5 * r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r2":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r2 = r1 * r2;
+                                    break;
+                                case "r3":
+                                    r2 = r1 * r3;
+                                    break;
+                                case "r4":
+                                    r2 = r1 * r4;
+                                    break;
+                                case "r5":
+                                    r2 = r1 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r2 * r1;
+                                    break;
+                                case "r3":
+                                    r2 = r2 * r3;
+                                    break;
+                                case "r4":
+                                    r2 = r2 * r4;
+                                    break;
+                                case "r5":
+                                    r2 = r2 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r3 * r1;
+                                    break;
+                                case "r2":
+                                    r2 = r3 * r2;
+                                    break;
+                                case "r4":
+                                    r2 = r3 * r4;
+                                    break;
+                                case "r5":
+                                    r2 = r3 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r4 * r1;
+                                    break;
+                                case "r2":
+                                    r2 = r4 * r2;
+                                    break;
+                                case "r3":
+                                    r2 = r4 * r3;
+                                    break;
+                                case "r5":
+                                    r2 = r4 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r5 * r1;
+                                    break;
+                                case "r2":
+                                    r2 = r5 * r2;
+                                    break;
+                                case "r3":
+                                    r2 = r5 * r3;
+                                    break;
+                                case "r5":
+                                    r2 = r5 * r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r3":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r3 = r1 * r2;
+                                    break;
+                                case "r3":
+                                    r3 = r1 * r3;
+                                    break;
+                                case "r4":
+                                    r3 = r1 * r4;
+                                    break;
+                                case "r5":
+                                    r3 = r1 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r2 * r1;
+                                    break;
+                                case "r3":
+                                    r3 = r2 * r3;
+                                    break;
+                                case "r4":
+                                    r3 = r2 * r4;
+                                    break;
+                                case "r5":
+                                    r3 = r2 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r3 * r1;
+                                    break;
+                                case "r2":
+                                    r3 = r3 * r2;
+                                    break;
+                                case "r4":
+                                    r3 = r3 * r4;
+                                    break;
+                                case "r5":
+                                    r3 = r3 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r4 * r1;
+                                    break;
+                                case "r2":
+                                    r3 = r4 * r2;
+                                    break;
+                                case "r3":
+                                    r3 = r4 * r3;
+                                    break;
+                                case "r5":
+                                    r3 = r4 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r5 * r1;
+                                    break;
+                                case "r2":
+                                    r3 = r5 * r2;
+                                    break;
+                                case "r3":
+                                    r3 = r5 * r3;
+                                    break;
+                                case "r5":
+                                    r3 = r5 * r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r4":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r4 = r1 * r2;
+                                    break;
+                                case "r3":
+                                    r4 = r1 * r3;
+                                    break;
+                                case "r4":
+                                    r4 = r1 * r4;
+                                    break;
+                                case "r5":
+                                    r4 = r1 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r2 * r1;
+                                    break;
+                                case "r3":
+                                    r4 = r2 * r3;
+                                    break;
+                                case "r4":
+                                    r4 = r2 * r4;
+                                    break;
+                                case "r5":
+                                    r4 = r2 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r3 * r1;
+                                    break;
+                                case "r2":
+                                    r4 = r3 * r2;
+                                    break;
+                                case "r4":
+                                    r4 = r3 * r4;
+                                    break;
+                                case "r5":
+                                    r4 = r3 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r4 * r1;
+                                    break;
+                                case "r2":
+                                    r4 = r4 * r2;
+                                    break;
+                                case "r3":
+                                    r4 = r4 * r3;
+                                    break;
+                                case "r5":
+                                    r4 = r4 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r5 * r1;
+                                    break;
+                                case "r2":
+                                    r4 = r5 * r2;
+                                    break;
+                                case "r3":
+                                    r4 = r5 * r3;
+                                    break;
+                                case "r5":
+                                    r4 = r5 * r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r5":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r5 = r1 * r2;
+                                    break;
+                                case "r3":
+                                    r5 = r1 * r3;
+                                    break;
+                                case "r4":
+                                    r5 = r1 * r4;
+                                    break;
+                                case "r5":
+                                    r5 = r1 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r2 * r1;
+                                    break;
+                                case "r3":
+                                    r5 = r2 * r3;
+                                    break;
+                                case "r4":
+                                    r5 = r2 * r4;
+                                    break;
+                                case "r5":
+                                    r5 = r2 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r3 * r1;
+                                    break;
+                                case "r2":
+                                    r5 = r3 * r2;
+                                    break;
+                                case "r4":
+                                    r5 = r3 * r4;
+                                    break;
+                                case "r5":
+                                    r5 = r3 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r4 * r1;
+                                    break;
+                                case "r2":
+                                    r5 = r4 * r2;
+                                    break;
+                                case "r3":
+                                    r5 = r4 * r3;
+                                    break;
+                                case "r5":
+                                    r5 = r4 * r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r5 * r1;
+                                    break;
+                                case "r2":
+                                    r5 = r5 * r2;
+                                    break;
+                                case "r3":
+                                    r5 = r5 * r3;
+                                    break;
+                                case "r5":
+                                    r5 = r5 * r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+    private static void DivOperation(String firstReg, String secondReg, String destinationReg, int immediateVal) {
+        if (secondReg.equals("s0")){ // second reg can't be s0, since nothing can divide by 0
+            System.out.println("Can't divided by 0!");
+            System.exit(-1);
+        }
+        else if (!firstReg.equals("s0") && !secondReg.equals("s0") && immediateVal == 0) { // mul.r1.r2.r3.0 : r3 = r1 / r2
+            switch (destinationReg) {
+                case "r1":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r1 = r1 / r2;
+                                    break;
+                                case "r3":
+                                    r1 = r1 / r3;
+                                    break;
+                                case "r4":
+                                    r1 = r1 / r4;
+                                    break;
+                                case "r5":
+                                    r1 = r1 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r2 / r1;
+                                    break;
+                                case "r3":
+                                    r1 = r2 / r3;
+                                    break;
+                                case "r4":
+                                    r1 = r2 / r4;
+                                    break;
+                                case "r5":
+                                    r1 = r2 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r3 / r1;
+                                    break;
+                                case "r2":
+                                    r1 = r3 / r2;
+                                    break;
+                                case "r4":
+                                    r1 = r3 / r4;
+                                    break;
+                                case "r5":
+                                    r1 = r3 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r4 / r1;
+                                    break;
+                                case "r2":
+                                    r1 = r4 / r2;
+                                    break;
+                                case "r3":
+                                    r1 = r4 / r3;
+                                    break;
+                                case "r5":
+                                    r1 = r4 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r1 = r5 / r1;
+                                    break;
+                                case "r2":
+                                    r1 = r5 / r2;
+                                    break;
+                                case "r3":
+                                    r1 = r5 / r3;
+                                    break;
+                                case "r5":
+                                    r1 = r5 / r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r2":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r2 = r1 / r2;
+                                    break;
+                                case "r3":
+                                    r2 = r1 / r3;
+                                    break;
+                                case "r4":
+                                    r2 = r1 / r4;
+                                    break;
+                                case "r5":
+                                    r2 = r1 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r2 / r1;
+                                    break;
+                                case "r3":
+                                    r2 = r2 / r3;
+                                    break;
+                                case "r4":
+                                    r2 = r2 / r4;
+                                    break;
+                                case "r5":
+                                    r2 = r2 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r3 / r1;
+                                    break;
+                                case "r2":
+                                    r2 = r3 / r2;
+                                    break;
+                                case "r4":
+                                    r2 = r3 / r4;
+                                    break;
+                                case "r5":
+                                    r2 = r3 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r4 / r1;
+                                    break;
+                                case "r2":
+                                    r2 = r4 / r2;
+                                    break;
+                                case "r3":
+                                    r2 = r4 / r3;
+                                    break;
+                                case "r5":
+                                    r2 = r4 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r2 = r5 / r1;
+                                    break;
+                                case "r2":
+                                    r2 = r5 / r2;
+                                    break;
+                                case "r3":
+                                    r2 = r5 / r3;
+                                    break;
+                                case "r5":
+                                    r2 = r5 / r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r3":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r3 = r1 / r2;
+                                    break;
+                                case "r3":
+                                    r3 = r1 / r3;
+                                    break;
+                                case "r4":
+                                    r3 = r1 / r4;
+                                    break;
+                                case "r5":
+                                    r3 = r1 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r2 / r1;
+                                    break;
+                                case "r3":
+                                    r3 = r2 / r3;
+                                    break;
+                                case "r4":
+                                    r3 = r2 / r4;
+                                    break;
+                                case "r5":
+                                    r3 = r2 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r3 / r1;
+                                    break;
+                                case "r2":
+                                    r3 = r3 / r2;
+                                    break;
+                                case "r4":
+                                    r3 = r3 / r4;
+                                    break;
+                                case "r5":
+                                    r3 = r3 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r4 / r1;
+                                    break;
+                                case "r2":
+                                    r3 = r4 / r2;
+                                    break;
+                                case "r3":
+                                    r3 = r4 / r3;
+                                    break;
+                                case "r5":
+                                    r3 = r4 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r3 = r5 / r1;
+                                    break;
+                                case "r2":
+                                    r3 = r5 / r2;
+                                    break;
+                                case "r3":
+                                    r3 = r5 / r3;
+                                    break;
+                                case "r5":
+                                    r3 = r5 / r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r4":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r4 = r1 / r2;
+                                    break;
+                                case "r3":
+                                    r4 = r1 / r3;
+                                    break;
+                                case "r4":
+                                    r4 = r1 / r4;
+                                    break;
+                                case "r5":
+                                    r4 = r1 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r2 / r1;
+                                    break;
+                                case "r3":
+                                    r4 = r2 / r3;
+                                    break;
+                                case "r4":
+                                    r4 = r2 / r4;
+                                    break;
+                                case "r5":
+                                    r4 = r2 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r3 / r1;
+                                    break;
+                                case "r2":
+                                    r4 = r3 / r2;
+                                    break;
+                                case "r4":
+                                    r4 = r3 / r4;
+                                    break;
+                                case "r5":
+                                    r4 = r3 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1": r4 = r4 / r1;
+                                    break;
+                                case "r2": r4 = r4 / r2;
+                                    break;
+                                case "r3": r4 = r4 / r3;
+                                    break;
+                                case "r5": r4 = r4 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r4 = r5 / r1;
+                                    break;
+                                case "r2":
+                                    r4 = r5 / r2;
+                                    break;
+                                case "r3":
+                                    r4 = r5 / r3;
+                                    break;
+                                case "r5":
+                                    r4 = r5 / r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case "r5":
+                    switch (firstReg) {
+                        case "r1":
+                            switch (secondReg) {
+                                case "r2":
+                                    r5 = r1 / r2;
+                                    break;
+                                case "r3":
+                                    r5 = r1 / r3;
+                                    break;
+                                case "r4":
+                                    r5 = r1 / r4;
+                                    break;
+                                case "r5":
+                                    r5 = r1 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r2":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r2 / r1;
+                                    break;
+                                case "r3":
+                                    r5 = r2 / r3;
+                                    break;
+                                case "r4":
+                                    r5 = r2 / r4;
+                                    break;
+                                case "r5":
+                                    r5 = r2 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r3":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r3 / r1;
+                                    break;
+                                case "r2":
+                                    r5 = r3 / r2;
+                                    break;
+                                case "r4":
+                                    r5 = r3 / r4;
+                                    break;
+                                case "r5":
+                                    r5 = r3 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r4":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r4 / r1;
+                                    break;
+                                case "r2":
+                                    r5 = r4 / r2;
+                                    break;
+                                case "r3":
+                                    r5 = r4 / r3;
+                                    break;
+                                case "r5":
+                                    r5 = r4 / r5;
+                                    break;
+                            }
+                            break;
+                        case "r5":
+                            switch (secondReg) {
+                                case "r1":
+                                    r5 = r5 / r1;
+                                    break;
+                                case "r2":
+                                    r5 = r5 / r2;
+                                    break;
+                                case "r3":
+                                    r5 = r5 / r3;
+                                    break;
+                                case "r5":
+                                    r5 = r5 / r4;
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
