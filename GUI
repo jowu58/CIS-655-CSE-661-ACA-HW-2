@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 public class GUI implements ActionListener {
     private JFrame frame;
+    private JPanel rootpanel, panel;
     private JButton button;
     private JLabel label, message;
     private JTextField instructionText;
@@ -29,6 +30,12 @@ public class GUI implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //退出窗口
         frame.setBounds(100, 100, 800, 500);
         frame.setLayout(null);
+
+        rootpanel = new JPanel(); //新建panel
+        rootpanel.setLayout(new FlowLayout());
+        panel = new JPanel(); //新建panel
+        panel.setLayout(new FlowLayout());
+        rootpanel.setLayout(null);
 
         button = new JButton("Enter");//新建按键
         button.setBounds(380, 70, 80, 25);
