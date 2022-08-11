@@ -22,12 +22,14 @@ public class GUI implements ActionListener {
     private static String dr_binary;
     private static String im_binary;
 
+    public static void main(String[] args) {
+        new GUI();
+    }
     public GUI() {
         frame = new JFrame("Simulator"); //窗口名字
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //退出窗口
         frame.setBounds(100, 100, 800, 500);
         frame.setLayout(null);
-
 
         rootpanel = new JPanel(); //新建panel
         rootpanel.setLayout(new FlowLayout());
@@ -36,22 +38,17 @@ public class GUI implements ActionListener {
         rootpanel.setLayout(null);
 
         button = new JButton("Enter");//新建按键
-        button.setBounds(400, 70, 80, 25);
+        button.setBounds(380, 70, 80, 25);
         button.addActionListener(this);
         frame.add(button); //按键放到panel里
-
 
         label = new JLabel("Instruction:"); //新建文字标签
         label.setBounds(250, 20, 80, 25); //标签大小位置
         frame.add(label); //标签放到panel里
 
-        instructionText = new JTextField(10); //新建文字输入框
+        instructionText = new JTextField(20); //新建文字输入框
         instructionText.setBounds(350, 20, 165, 25); //文字输入框位置
         frame.add(instructionText); //文字输入框放到panel里
-
-        message = new JLabel(""); //新建文字标签
-        message.setBounds(400, 95, 300, 25); //标签大小位置
-        frame.add(message); //标签放到panel里
 
         textArea = new JTextArea();
         textArea.setBounds(220, 150, 550, 230);
@@ -93,21 +90,15 @@ public class GUI implements ActionListener {
         frame.setVisible(true); //窗口可见
     }
 
-    public static void main(String[] args) {
-        new GUI();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         instruction = instructionText.getText();
         int res = CheckSyntax(instruction);
         while (res == 0) {
-            message.setText("Syntax error");
-            while (res == 0){
-                instructionText.setText("");
-                instruction = instructionText.getText();
-                res = CheckSyntax(instruction);
-            }
+            JOptionPane.showMessageDialog(frame, "Syntax Error!");
+            instructionText.setText("");
+            instruction = instructionText.getText();
+            res = CheckSyntax(instruction);
         }
 
         String lc_instruction = instruction.toLowerCase(); // lower case string for instruction
@@ -153,7 +144,6 @@ public class GUI implements ActionListener {
                 sr_binary  + " " + dr_binary  + " " + im_binary + "\t" + add + "\n");
 
         instructionText.setText("");
-        message.setText("");
     }
     private static int CheckSyntax(String syntax) {
         String[] tokens = syntax.split("\\.");
